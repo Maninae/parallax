@@ -38,7 +38,8 @@ struct ChatRowView: View {
     
     var displayName: String {
         // 1. Try saved group or contact name from SQLite
-        if let defaultName = chat.name, !defaultName.isEmpty, defaultName != chat.identifier {
+        let defaultName = chat.name
+        if !defaultName.isEmpty && defaultName != chat.identifier {
             return defaultName
         }
         
@@ -69,13 +70,23 @@ struct ChatRowView: View {
             
             Spacer()
             
-            if let date = chat.lastMessageAt {
-                Text(date, style: .time)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
+            Text(chat.lastMessageAt, style: .time)
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
         .padding(.vertical, 4)
+    }
+}
+
+extension Chat: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
+extension Message: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(rowID)
     }
 }
 

@@ -4,11 +4,12 @@ import IMsgCore
 struct MessageThreadView: View {
     let chat: Chat
     @StateObject private var viewModel = MessageThreadViewModel()
+    @State private var showInspector: Bool = false
     
-    var body: some View {
+    var mainThreadContent: some View {
         VStack(spacing: 0) {
             // Header
-            ChatHeaderView(chat: chat)
+            ChatHeaderView(chat: chat, showInspector: $showInspector)
                 .frame(height: 60)
                 .background(Color(NSColor.windowBackgroundColor).opacity(0.8))
             
@@ -18,17 +19,17 @@ struct MessageThreadView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     LazyVStack(spacing: 8) {
-                        ForEach(viewModel.messages, id: \.id) { message in
+                        ForEach(viewModel.messages, id: \.rowID) { message in
                             MessageBubbleView(message: message)
-                                .id(message.id)
+                                .id(message.rowID)
                         }
                     }
                     .padding()
                 }
-                .onChange(of: viewModel.messages.count) { _ in
+                .onChange(of: viewModel.messages.count) {
                     if let last = viewModel.messages.last {
                         withAnimation {
-                            proxy.scrollTo(last.id, anchor: .bottom)
+                            proxy.scrollTo(last.rowID, anchor: .bottom)
                         }
                     }
                 }
@@ -39,36 +40,52 @@ struct MessageThreadView: View {
             // Compose Area (Read-Only approach for now, pending AppleScript integration)
             ComposeMessageView()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    var body: some View {
+        HStack(spacing: 0) {
+            mainThreadContent
+            
+            if showInspector {
+                Divider()
+                ContactDetailSidebar(chat: chat) {
+                    withAnimation(.spring()) {
+                        showInspector = false
+                    }
+                }
+                .transition(.move(edge: .trailing))
+            }
+        }
         .onAppear {
             viewModel.loadMessages(for: chat.id)
         }
-        .onChange(of: chat.id) { newId in
-            viewModel.loadMessages(for: newId)
+        .onChange(of: chat.id) {
+            viewModel.loadMessages(for: chat.id)
         }
     }
 }
 
+@MainActor
 class MessageThreadViewModel: ObservableObject {
     @Published var messages: [Message] = []
     private let service = MessagesService.shared
     
     func loadMessages(for chatID: Int64) {
-        // Fetch on background thread
-        Task.detached {
-            let fetched = self.service.messages(for: chatID)
-            await MainActor.run {
-                self.messages = fetched
-            }
-        }
+        // IMsgCore handles its own internal queue, so we can safely call this from the MainActor
+        let fetched = self.service.messages(for: chatID)
+        self.messages = fetched
     }
 }
 
 struct ChatHeaderView: View {
     let chat: Chat
+    @Binding var showInspector: Bool
     @ObservedObject private var contactStore = ContactStore.shared
     
     var displayName: String {
-        if let defaultName = chat.name, !defaultName.isEmpty, defaultName != chat.identifier {
+        let defaultName = chat.name
+        if !defaultName.isEmpty && defaultName != chat.identifier {
             return defaultName
         }
         if let contact = contactStore.contact(for: chat.identifier) {
@@ -93,7 +110,9 @@ struct ChatHeaderView: View {
             Spacer()
             
             ButtonActionIcon(icon: "info.circle") {
-                // Toggle Right Sidebar Person Info
+                withAnimation(.spring()) {
+                    showInspector.toggle()
+                }
             }
         }
         .padding(.horizontal)
@@ -121,7 +140,7 @@ struct MessageBubbleView: View {
         HStack {
             if message.isFromMe { Spacer() }
             
-            Text(message.text ?? "Attachment")
+            Text(message.text.isEmpty ? "Attachment" : message.text)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
                 .background(message.isFromMe ? Color.blue : Color.gray.opacity(0.2))
@@ -129,7 +148,8 @@ struct MessageBubbleView: View {
                 .cornerRadius(18)
                 .contextMenu {
                     Button("Copy") {
-                        if let text = message.text {
+                        let text = message.text
+                        if !text.isEmpty {
                             NSPasteboard.general.clearContents()
                             NSPasteboard.general.setString(text, forType: .string)
                         }

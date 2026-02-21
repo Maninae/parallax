@@ -59,15 +59,7 @@ struct ContentView: View {
     }
 }
 
-// Stub Views for the initial build validation
-struct ChatsView: View {
-    var body: some View {
-        Text("Chats UI Goes Here")
-            .font(.largeTitle)
-            .foregroundColor(.secondary)
-    }
-}
-
+// Stub view for the orbit until Phase 5
 struct PeopleOrbitView: View {
     var body: some View {
         Text("People Orbit 'Bubble-Sea' Goes Here")
@@ -75,3 +67,4 @@ struct PeopleOrbitView: View {
             .foregroundColor(.secondary)
     }
 }
+
