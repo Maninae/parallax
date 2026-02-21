@@ -60,4 +60,17 @@ public class MessagesService: ObservableObject {
             return []
         }
     }
+    
+    /// Get history for a chat
+    public func messages(for chatID: Int64, limit: Int = 100) -> [Message] {
+        guard let store = store else { return [] }
+        do {
+            // IMsgCore sorts messages by date DESC so we generally want to reverse them for UI display
+            let msgs = try store.messages(chatID: chatID, limit: limit)
+            return msgs.reversed()
+        } catch {
+            msgLogger.error("Failed to load messages for \(chatID): \(error.localizedDescription)")
+            return []
+        }
+    }
 }
