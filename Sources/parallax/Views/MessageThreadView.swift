@@ -11,7 +11,7 @@ struct MessageThreadView: View {
             // Header
             ChatHeaderView(chat: chat, showInspector: $showInspector)
                 .frame(height: 60)
-                .background(Color(NSColor.windowBackgroundColor).opacity(0.8))
+                .background(VisualEffectView(material: .headerView, blendingMode: .withinWindow))
             
             Divider()
             
