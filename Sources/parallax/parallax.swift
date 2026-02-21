@@ -18,7 +18,8 @@ struct ParallaxApp: App {
 // Custom AppDelegate to handle app lifecycle and default window behaviors
 class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Any setup
+        NSApp.setActivationPolicy(.regular)
+        NSApp.activate(ignoringOtherApps: true)
     }
 }
 

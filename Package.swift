@@ -8,6 +8,9 @@ let package = Package(
     platforms: [
         .macOS(.v14)
     ],
+    products: [
+        .executable(name: "Parallax", targets: ["parallax"])
+    ],
     dependencies: [
         .package(url: "https://github.com/steipete/imsg.git", branch: "main"),
         .package(url: "https://github.com/mattt/ollama-swift.git", branch: "main")

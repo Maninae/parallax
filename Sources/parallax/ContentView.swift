@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct ContentView: View {
     @State private var selectedTab: Tab = .chats
@@ -65,6 +66,46 @@ struct ContentView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .onAppear {
+                NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                    if event.modifierFlags.contains(.command),
+                       event.modifierFlags.contains(.option),
+                       event.charactersIgnoringModifiers == "s" {
+                        print("📸 DEBUG SCREENSHOT SHORTCUT DETECTED!")
+                        captureDebugScreenshot()
+                        return nil // Consume event
+                    }
+                    return event
+                }
+            }
+        }
+    }
+    
+    private func captureDebugScreenshot() {
+        guard let window = NSApplication.shared.windows.first(where: { $0.isKeyWindow }) ?? NSApplication.shared.windows.first,
+              let view = window.contentView else {
+            print("Failed to get window or content view")
+            return
+        }
+        
+        guard let bitmapRep = view.bitmapImageRepForCachingDisplay(in: view.bounds) else {
+            print("Failed to create bitmap representation")
+            return
+        }
+        
+        view.cacheDisplay(in: view.bounds, to: bitmapRep)
+        
+        guard let pngData = bitmapRep.representation(using: .png, properties: [:]) else {
+            print("Failed to create PNG data")
+            return
+        }
+        
+        let path = URL(fileURLWithPath: "/tmp/parallax_debug_render.png")
+        do {
+            try pngData.write(to: path)
+            print("Successfully saved window screenshot to \(path.path)")
+        } catch {
+            print("Failed to save window screenshot: \(error)")
         }
     }
 }

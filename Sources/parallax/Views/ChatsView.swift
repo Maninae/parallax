@@ -16,6 +16,7 @@ struct ChatsView: View {
             }
             .navigationTitle("Messages")
             .listStyle(.sidebar)
+            .navigationSplitViewColumnWidth(min: 280, ideal: 320)
             
             if messagesService.hasFullDiskAccessError {
                 FullDiskAccessWarningView()
