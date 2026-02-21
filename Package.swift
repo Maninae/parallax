@@ -9,7 +9,8 @@ let package = Package(
         .macOS(.v14)
     ],
     dependencies: [
-        .package(url: "https://github.com/steipete/imsg.git", branch: "main")
+        .package(url: "https://github.com/steipete/imsg.git", branch: "main"),
+        .package(url: "https://github.com/mattt/ollama-swift.git", branch: "main")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -17,7 +18,8 @@ let package = Package(
         .executableTarget(
             name: "parallax",
             dependencies: [
-                .product(name: "IMsgCore", package: "imsg")
+                .product(name: "IMsgCore", package: "imsg"),
+                .product(name: "Ollama", package: "ollama-swift")
             ]
         ),
     ]

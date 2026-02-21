@@ -6,6 +6,7 @@ struct ContentView: View {
     enum Tab {
         case chats
         case people
+        case knowledgeBase
     }
     
     var body: some View {
@@ -25,6 +26,13 @@ struct ContentView: View {
                     Image(systemName: "person.2.circle.fill")
                         .font(.system(size: 20))
                         .foregroundColor(selectedTab == .people ? .blue : .gray)
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                Button(action: { selectedTab = .knowledgeBase }) {
+                    Image(systemName: "brain.head.profile")
+                        .font(.system(size: 20))
+                        .foregroundColor(selectedTab == .knowledgeBase ? .blue : .gray)
                 }
                 .buttonStyle(PlainButtonStyle())
                 
@@ -52,6 +60,8 @@ struct ContentView: View {
                     ChatsView()
                 case .people:
                     PeopleOrbitView()
+                case .knowledgeBase:
+                    KnowledgeBaseView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -59,12 +69,4 @@ struct ContentView: View {
     }
 }
 
-// Stub view for the orbit until Phase 5
-struct PeopleOrbitView: View {
-    var body: some View {
-        Text("People Orbit 'Bubble-Sea' Goes Here")
-            .font(.largeTitle)
-            .foregroundColor(.secondary)
-    }
-}
 

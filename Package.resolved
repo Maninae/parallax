@@ -1,5 +1,5 @@
 {
-  "originHash" : "d26613f30df2439219de2474c59643378f3bace69c7f4187645b2ecdae9d9aab",
+  "originHash" : "6225fcdfddeec6609139ad79a9ce23f2e2ef664dfb27ce64124608c90dc5a3b9",
   "pins" : [
     {
       "identity" : "commander",
@@ -17,6 +17,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "9c328a247d1e3eb9e4c361c93e8ccfae423ae5ff"
+      }
+    },
+    {
+      "identity" : "ollama-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mattt/ollama-swift.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "63a8891509399450322b19786b129024b612bcf3"
       }
     },
     {
