@@ -16,7 +16,10 @@ struct ContactDetailSidebar: View {
                 Text("Details")
                     .font(.headline)
                 Spacer()
-                Button(action: onClose) {
+                Button(action: {
+                    print("👉 [ContactDetailSidebar] Close button tapped.")
+                    onClose()
+                }) {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundColor(.gray)
                         .font(.title3)

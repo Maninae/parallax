@@ -137,6 +137,7 @@ struct FullDiskAccessWarningView: View {
                 .padding(.horizontal)
             
             Button("Retry") {
+                print("👉 [ChatsView] Full Disk Access Retry tapped.")
                 messagesService.retryConnection()
             }
             .buttonStyle(.borderedProminent)

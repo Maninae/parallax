@@ -20,6 +20,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
+        
+        // Dynamically set the App Icon from our SPM resource bundle
+        if let iconPath = Bundle.module.path(forResource: "AppIcon", ofType: "png"),
+           let iconImage = NSImage(contentsOfFile: iconPath) {
+            NSApp.applicationIconImage = iconImage
+        } else {
+            print("⚠️ Could not load AppIcon from resource bundle")
+        }
     }
 }
 

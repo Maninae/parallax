@@ -23,6 +23,9 @@ let package = Package(
             dependencies: [
                 .product(name: "IMsgCore", package: "imsg"),
                 .product(name: "Ollama", package: "ollama-swift")
+            ],
+            resources: [
+                .process("Resources")
             ]
         ),
     ]

@@ -54,6 +54,7 @@ struct KnowledgeBaseView: View {
     }
     
     private func submitPrompt() {
+        print("👉 [KnowledgeBaseView] Submit prompt button tapped. Prompt: '\(prompt)'")
         guard !prompt.isEmpty else { return }
         
         responseText = ""

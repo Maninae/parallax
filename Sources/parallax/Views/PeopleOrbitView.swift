@@ -37,7 +37,7 @@ struct PeopleOrbitView: View {
                                 ContactBubble(identifier: identifier)
                                     .onTapGesture {
                                         // Placeholder for launching into person-specific orbit view
-                                        print("Tapped on orbit for: \(identifier)")
+                                        print("👉 [PeopleOrbitView] Tapped on contact bubble for: \(identifier)")
                                     }
                             }
                         }

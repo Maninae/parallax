@@ -110,6 +110,7 @@ struct ChatHeaderView: View {
             Spacer()
             
             ButtonActionIcon(icon: "info.circle") {
+                print("👉 [MessageThreadView] Info circle tapped. Toggling inspector.")
                 withAnimation(.spring()) {
                     showInspector.toggle()
                 }
@@ -148,6 +149,7 @@ struct MessageBubbleView: View {
                 .cornerRadius(18)
                 .contextMenu {
                     Button("Copy") {
+                        print("👉 [MessageThreadView] Context menu Copy tapped.")
                         let text = message.text
                         if !text.isEmpty {
                             NSPasteboard.general.clearContents()
@@ -172,6 +174,7 @@ struct ComposeMessageView: View {
                 .padding(.leading, 12)
             
             ButtonActionIcon(icon: "arrow.up.circle.fill") {
+                print("👉 [MessageThreadView] Send message tapped. Text: '\(text)'")
                 // Send action goes here
             }
             .padding(.trailing, 12)
