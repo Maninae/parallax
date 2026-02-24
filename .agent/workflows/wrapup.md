@@ -19,3 +19,4 @@ When requested to run the wrap-up workflow, or when concluding a major session, 
      - **Incomplete Threads**: What was left unfinished and exactly where to pick it up.
      - **How to Test/Resume**: Specific bash commands to run the project.
 4. **Wrap Up**: Commit these files to git.
+5. **Sync**: Run the `/gmp` workflow to solidify the changes in git and push to remote.
