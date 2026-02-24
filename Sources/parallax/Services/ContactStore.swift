@@ -2,6 +2,7 @@ import Foundation
 import Contacts
 import SwiftUI
 import OSLog
+import PhoneNumberKit
 
 let logger = Logger(subsystem: "com.parallax.app", category: "ContactStore")
 
@@ -12,6 +13,7 @@ public class ContactStore: ObservableObject {
     @Published public var contacts: [String: CNContact] = [:]
     
     private let store = CNContactStore()
+    private let kit = PhoneNumberUtility()
     
     private init() {
         requestAccess()
@@ -51,13 +53,21 @@ public class ContactStore: ObservableObject {
         
         let request = CNContactFetchRequest(keysToFetch: keys)
         
+        let kit = self.kit
+        let store = self.store
         Task.detached {
             var newMap: [String: CNContact] = [:]
             do {
-                try self.store.enumerateContacts(with: request) { contact, _ in
+                try store.enumerateContacts(with: request) { contact, _ in
                     // Index by normalized phone numbers
                     for phoneNumber in contact.phoneNumbers {
-                        let num = phoneNumber.value.stringValue.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
+                        let rawNum = phoneNumber.value.stringValue
+                        if let parsed = try? kit.parse(rawNum) {
+                            let e164 = kit.format(parsed, toType: .e164)
+                            newMap[e164] = contact
+                        }
+                        
+                        let num = rawNum.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression)
                         if !num.isEmpty {
                             newMap[num] = contact
                         }
@@ -85,6 +95,11 @@ public class ContactStore: ObservableObject {
         // Try strict email match first
         if handle.contains("@"), let c = contacts[handle.lowercased()] {
             return c
+        }
+        
+        if let parsed = try? kit.parse(handle) {
+            let e164 = kit.format(parsed, toType: .e164)
+            if let c = contacts[e164] { return c }
         }
         
         // Try normalized digit match
